@@ -39,11 +39,6 @@
   </div>
   <div class="navbar-menu">
     <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
-  <a class="navbar-item" href="#">
-      <span class="icon">
-          <i class="fas fa-home"></i>
-      </span>
-      </a>
       
     </div>
 
@@ -56,7 +51,11 @@
     <div class="container is-max-desktop">
       <div class="columns is-centered">
         <div class="column has-text-centered">
-          <h1 class="title is-1 publication-title">Anonymous Title</h1>
+          <h1 class="title is-1 publication-title">NOAH</h1>
+          <h2 class="subtitle is-4 publication-title">
+            Benchmarking Narrative Prior Driven<br>
+            Hallucination and Omission in Video Large Language Models
+          </h2>
           <div class="is-size-5 publication-authors">
             <span class="author-block">
               <a href="#">Anonymous</a><sup>1</sup>,</span>
@@ -91,7 +90,7 @@
   </div>
 </section>
 
-<section class="hero teaser">
+<!-- <section class="hero teaser">
   <div class="container is-max-desktop">
     <div class="hero-body">
       <video id="teaser" autoplay muted loop playsinline height="100%">
@@ -103,10 +102,10 @@
       </h2>
     </div>
   </div>
-</section>
+</section> -->
 
 
-<section class="section">
+<!-- <section class="section">
   <div class="container is-max-desktop">
     <h2 class="title is-3 has-text-centered">Examples</h2>
     <div class="columns is-centered">
@@ -122,7 +121,7 @@
       </div>
     </div>
   </div>
-  </section>
+  </section> -->
 
 
 <section class="section">
@@ -133,13 +132,7 @@
         <h2 class="title is-3">Abstract</h2>
         <div class="content has-text-justified">
           <p>
-            This section is anonymized for review.
-          </p>
-          <p>
-            Details are intentionally omitted.
-          </p>
-          <p>
-            Additional specifics are removed to preserve anonymity.
+            Video large language models (Video LLMs) have recently achieved strong performance on tasks such as captioning, summarization, and question answering. Many models and training methods explicitly encourage continuity across events to enhance narrative coherence. While this improves fluency, it also introduces an inductive bias that prioritizes storyline consistency over strict grounding in visual evidence. We identify this bias, which we call narrative prior, as a key driver of two errors: hallucinations, where non-existent events are introduced or existing ones are misinterpreted, and omissions, where factual events are suppressed because they are misaligned with surrounding context. To systematically evaluate narrative prior–induced errors, we introduce NOAH, a large-scale benchmark that constructs composite videos by inserting clips from other sources into target videos. By varying semantic similarity and insertion position, our benchmark enables controlled and scalable analysis of narrative priors. We design one captioning task with tailored metrics and three QA tasks—Existence, Temporal, and Narrative—yielding more than 60K evaluation samples. Extensive experiments yield three key findings: (i) most Video LLMs exhibit hallucinations and omissions driven by narrative priors, (ii) the patterns of these errors vary across architectures and depend on event similarity and insertion position, and (iii) reliance on narrative priors intensifies under sampling with fewer frames, amplifying errors when event continuity is weak. We establish NOAH as the first standardized evaluation of narrative prior–induced hallucination and omission in Video LLMs, providing a foundation for developing more reliable and trustworthy models.
           </p>
         </div>
       </div>
@@ -149,13 +142,81 @@
     <!-- Paper video. -->
     <div class="columns is-centered has-text-centered">
       <div class="column is-four-fifths">
-        <h2 class="title is-3">Video</h2>
-        <div class="publication-video">
-          <p>Video removed for anonymous review.</p>
+        <h2 class="title is-3">Dataset Construction</h2>
+        <div class="has-text-centered" style="margin: 2rem 0;">
+          <img src="./static/images/2_dataset_construction_fig.png" alt="Dataset Construction Pipeline" style="max-width: 100%; height: auto;">
+        </div>
+        <div class="content has-text-justified">
+          <p>We construct composite videos to isolate errors driven by narrative priors. 
+            For each target video from ActivityNet-Captions, we insert an event-level clip from another video. 
+            Candidate clips are ranked by CLIP cosine similarity, and we select high, medium, and low similarity levels. 
+            Each clip is then inserted at the start, middle, or end of the target video, yielding 3×3 = 9 controlled variants per video. 
+            This design allows us to analyze how semantic plausibility and temporal context affect hallucination and omission. 
+            In total, we curate 1,000 target videos and construct 9,000 composite videos for systematic evaluation.
+          </p>
         </div>
       </div>
     </div>
     <!--/ Paper video. -->
+
+    <!-- Data Statistics. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Data Statistics</h2>
+        <div class="has-text-centered" style="margin: 2rem 0;">
+          <img src="./static/images/3_dataset_statistics_fig.png" alt="Dataset Statistics" style="max-width: 100%; height: auto;">
+        </div>
+        <div class="content has-text-justified">
+          <p>The NOAH dataset includes 1,000 target videos from ActivityNet-Captions and 9,000 composite videos evenly distributed across three insertion positions and three similarity levels. On average, the composite videos are 199 seconds long (ranging from 14 to 728 seconds) and contain 6.17 annotated events (range: 3–19). We provide distributions of video durations, event counts, similarity scores, and task samples. Unlike single-event QA benchmarks, NOAH enables controlled analysis of hallucination and omission in multi-event video settings.</p>
+        </div>
+      </div>
+    </div>
+    <!--/ Data Statistics. -->
+
+    <!-- Task. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Task</h2>
+        <div class="has-text-centered" style="margin: 2rem 0;">
+          <img src="./static/images/4_task_illustration_fig.png" alt="Task Illustration" style="max-width: 100%; height: auto;">
+        </div>
+        <div class="content has-text-justified">
+          <p>NOAH evaluates Video LLMs through one captioning task and three QA tasks. The <strong>captioning task</strong> measures whether models hallucinate unsupported events or omit factual ones when generating descriptions. <strong>Existence QA</strong> checks if a model can detect whether an inserted event is present in the video. <strong>Temporal QA</strong> tests whether the model can correctly identify the chronological order of the inserted event relative to its neighbors. <strong>Narrative QA</strong> probes a model’s ability to reject fabricated but plausible events that align with the surrounding storyline. Together, these tasks provide a comprehensive framework to analyze how narrative priors drive hallucinations and omissions in both open-ended and structured settings.</p>
+        </div>
+      </div>
+    </div>
+    <!--/ Task. -->
+
+    <!-- Experiments. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Experiments</h2>
+        <div class="content has-text-justified">
+          <h3 class="title is-5 has-text-centered" style="color: #666; margin-top: 2rem;">Overall Results</h3>
+          <p>We evaluate a wide range of open- and closed-source Video LLMs on NOAH. Results show that most models frequently hallucinate or omit events, confirming that narrative priors strongly influence both captioning and QA tasks.</p>
+          <div class="has-text-centered">
+            <img src="./static/images/table1.png" alt="Overall Results" style="max-width: 100%; height: auto;">
+          </div>
+
+          <h3 class="title is-5 has-text-centered" style="color: #666; margin-top: 2rem;">Controlled Evaluation</h3>
+          <p>To isolate the effect of event insertion, we compare models on original videos, inserted clips, and composite videos. The results reveal that inserted events often trigger hallucinations and that models tend to ignore inserted content to maintain narrative coherence.</p>
+          <div class="has-text-centered">
+            <img src="./static/images/table2.png" alt="Controlled Evaluation" style="max-width: 100%; height: auto;">
+          </div>
+
+          <h3 class="title is-5 has-text-centered" style="color: #666; margin-top: 2rem;">Analysis</h3>
+          <p>We conduct empirical analysis to examine how narrative priors drive hallucinations and omissions under different conditions. Error rates vary with insertion position and semantic similarity, with end and high-similarity insertions showing stronger effects. KL divergence reveals that narrative priors influence the entire decoding process, and reduced temporal context further amplifies these errors.</p>
+          <div class="has-text-centered">
+            <img src="./static/images/analysis1.png" alt="Analysis" style="max-width: 100%; height: auto;">
+          </div>
+          <div class="has-text-centered">
+            <img src="./static/images/analysis2.png" alt="Analysis" style="max-width: 100%; height: auto;">
+          </div>
+        
+        </div>
+      </div>
+    </div>
+    <!--/ Experiments. -->
   </div>
 </section>
 
@@ -167,10 +228,10 @@
   <div class="container is-max-desktop content">
     <h2 class="title">BibTeX</h2>
     <pre><code>@article{anonymous2025,
-  author    = {Anonymous},
+  author    = {NOAH: Benchmarking Narrative Prior Driven Hallucination and Omission in Video Large Language Models},
   title     = {Anonymous Title},
   journal   = {Under Review},
-  year      = {2025},
+  year      = {2026},
 }</code></pre>
   </div>
 </section>
